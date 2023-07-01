@@ -1,84 +1,93 @@
-const input = require('sync-input');  // Get input function
-const cyrillicPattern = /^[\u0400-\u04FF]+$/;  // This is used to check for Cyrillic further in the code
-// Definition of variables that are used throughout
+// Definition of global variables
 let words = ['python', 'java', 'swift', 'javascript'];
 let wins = 0;
 let losses = 0;
-function randomIndex() {  // Getting a random word from words[]
+
+// Getting a random word
+function randomWord() {
     let index = Math.floor(Math.random() * words.length);
     return words[index];
 }
-function containsUppercase(str) {  // Make sure input letter is not uppercase
+
+// Make sure letter is not upper case
+function isUppercase(str) {
     return /[A-Z]/.test(str);
 }
-function isLetter(str) {  // Make sure input letter is lowercase English letter;
+
+// Make sure letter is lowercase english letter
+function isLowercaseEnglish(str) {  // Make sure prompt letter is lowercase English letter;
     return /[a-z]/.test(str);
 }
-function menu() {  // Defining a menu function which helps user navigate - play, get scores or exit the game
-    let answers = ['play', 'results', 'exit'];
-    let menuInput = input("Type \"play\" to play the game, \"results\" to show the scoreboard, and \"exit\" to quit: ");
-    if (answers.includes(menuInput) == false) {
-        menu();
-    }
-    if (menuInput == 'exit') {
-        return 1;
-    } else if (menuInput == 'play') {
-        return hangMan();
-    } else if (menuInput == 'results') {
-        console.log(`You won: ${wins} times.`);
-        console.log(`You lost: ${losses} times.`);
-        return menu();
+
+// Menu function to navigate the game
+function menu() {
+    let menuPrompt = prompt("Type 'play' to play the game, 'results' to show the scoreboard, and 'exit' to quit: ");
+    switch(menuPrompt) {
+        case "play":
+            return hangman();
+        case "results":
+            console.log(`You won: ${wins} times.`);
+            console.log(`You lost: ${losses} times.`);
+            return menu();
+        case "exit":
+            return 1;
+
+        default:
+            return menu();
     }
 }
+
 console.log("H A N G M A N");
-function hangMan() { // Defining the game itself
-    // Storing all the information needed for the game in variables
-    let word = randomIndex();
-    let hiddenArr = new Array(word.length);
-    hiddenArr.fill("-");
-    let guessedArr = new Array(20);
+// Function for game logic
+function hangman() {
+    // Creating local variables which will be used in game
+    let word = randomWord();
+    let hiddenLetters = new Array(word.length);
+    hiddenLetters.fill("-");
+    let guessedLetters = [];
     let attempts = 8;
-    // Getting input from the user as long as he has attempts left
-    for (let x = 0; x != attempts;) {
-        // Ending the game if user guessed the word
-        if (JSON.stringify(hiddenArr) == JSON.stringify(Array.from(word))) {
+    // Getting prompt from the user as long as he has attempts left
+    for (let x = 0; x !== attempts;) {
+        // Ending the game if word guessed
+        if (JSON.stringify(hiddenLetters) === JSON.stringify(Array.from(word))) {
             wins++;
-            console.log(`You guessed the word ${word}!`);
-            console.log('You survived!');
+            console.log(`You guessed the word ${word}!\n You survived!`);
             break;
         }
-        // Show masked word and prompt user for input
+        // Show masked word and prompt user
         console.log();
-        console.log(hiddenArr.join(''));
-        let letter = input("Input a letter: ");
-        // Error-handling with functions pre-defined above
+        console.log(hiddenLetters.join(''));
+        let letter = prompt("Prompt a letter: ");
+        // Error handling
         if (letter.length < 1 || letter.length > 1) {
-            console.log('Please, input a single letter.');
-        } else if (containsUppercase(letter) == true || isLetter(letter) == false) {
-            console.log('Please, enter a lowercase letter from the English alphabet.');
-        } else if (hiddenArr.includes(letter) || guessedArr.includes(letter)) {
-            console.log('You\'ve already guessed this letter.');
-        // Checking if letter provided is in the word, then pushing it to hiddenArr with uncovering
-        } else if (word.includes(letter) == true && hiddenArr.includes(letter) == false) {
+            console.log("Please, prompt a single letter!");
+        } else if (isUppercase(letter) === true || isLowercaseEnglish(letter) === false) {
+            console.log("Please, enter a lowercase letter from the English alphabet!");
+        } else /*if (hiddenLetters.includes(letter) || guessedLetters.includes(letter))*/ {
+            console.log("You've already guessed this letter.");
+        }
+        // Checking if letter provided is in the word, then showing it
+        if (word.includes(letter) === true && hiddenLetters.includes(letter) === false) {
             for (let y = 0; y < word.length; y++) {
                 if (letter === word[y]) {
-                    hiddenArr[y] = letter;
-                    guessedArr.push(letter);
+                    hiddenLetters[y] = letter;
+                    guessedLetters.push(letter);
                 }
             }
-        // If letter is not in the word, decrementing attempts
-        } else if (word.includes(letter) == false) {
+        // If letter is not in the word, decrement attempts
+        } else /*if (word.includes(letter) === false)*/ {
             attempts--;
-            guessedArr.push(letter);
-            console.log('That letter doesn\'t appear in the word.');
+            guessedLetters.push(letter);
+            console.log("That letter doesn't appear in the word.");
         }
     }
-    // If there is no attempts left and user did not win, print losing message
-    if (attempts == 0 && JSON.stringify(hiddenArr) != JSON.stringify(Array.from(word))) {
+    // End game
+    if (attempts === 0 && JSON.stringify(hiddenLetters) !== JSON.stringify(Array.from(word))) {
         losses++;
         console.log();
         console.log('You lost!');
     }
-    menu(); // Call menu function to receive further instructions from the user
+    // Call menu function to receive further instructions from the user
+    menu();
 }
 menu();
