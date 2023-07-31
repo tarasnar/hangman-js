@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  font: 100% "REM", sans-serif;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column nowrap;
+  background-color: black;
+  color: white;
+}
+
+h1 {
+  font-size: 48px;
+  padding: 10px;
+}
+
+.menu {
+  display: block;
+}
+.menu div {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-flow: row nowrap;
+}
+.menu div button {
+  margin: 5px;
+  padding: 5px;
+  border: none;
+  background-color: black;
+  color: white;
+  text-decoration: underline;
+}
+
+.container-style {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column nowrap;
+  background-color: black;
+  color: white;
+}
+
+/*# sourceMappingURL=style.css.map */
