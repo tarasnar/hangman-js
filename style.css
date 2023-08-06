@@ -47,4 +47,8 @@ h1 {
   color: white;
 }
 
+.prompt {
+  display: none;
+}
+
 /*# sourceMappingURL=style.css.map */
